@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PizzaFuego - La Auténtica Pizza Italiana</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Poppins', 'sans-serif'],
+                        'display': ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        'pizza-red': '#C41E3A',
+                        'pizza-yellow': '#FFD700',
+                        'pizza-orange': '#FF6B35',
+                        'pizza-brown': '#8B4513',
+                        'pizza-light': '#FFF5E1',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos personalizados */
+        .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        .dark .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80');
+        }
+        
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+        
+        /* Animación para el título */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fadeInUp {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        /* Animación para las tarjetas de pizza */
+        .pizza-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .pizza-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #C41E3A;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-pizza-light dark:bg-gray-900 font-sans transition-all">
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 w-full bg-white dark:bg-gray-900 shadow-md z-50 transition-all">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-pizza-red rounded-full flex items-center justify-center mr-2">
+                        <i class="fas fa-pizza-slice text-white text-xl"></i>
+                    </div>
+                    <a href="#" class="text-2xl font-bold text-gray-800 dark:text-white">
+                        Pizza<span class="text-pizza-red">Fuego</span>
+                    </a>
+                </div>
+                
+                <!-- Enlaces de navegación (Desktop) -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="#inicio" class="text-gray-700 dark:text-gray-300 hover:text-pizza-red dark:hover:text-pizza-yellow font-medium transition-colors">Inicio</a>
+                    <a href="#menu" class="text-gray-700 dark:text-gray-300 hover:text-pizza-red dark:hover:text-pizza-yellow font-medium transition-colors">Menú</a>
+                    <a href="#sucursales" class="text-gray-700 dark:text-gray-300 hover:text-pizza-red dark:hover:text-pizza-yellow font-medium transition-colors">Sucursales</a>
+                    <a href="#ingredientes" class="text-gray-700 dark:text-gray-300 hover:text-pizza-red dark:hover:text-pizza-yellow font-medium transition-colors">Ingredientes</a>
+                    <a href="#nosotros" class="text-gray-700 dark:text-gray-300 hover:text-pizza-red dark:hover:text-pizza-yellow font-medium transition-colors">Nosotros</a>
+                    <a href="#contacto" class="text-gray-700 dark:text-gray-300 hover:text-pizza-red dark:hover:text-pizza-yellow font-medium transition-colors">Contacto</a>
+                </div>
+                
+                <!-- Controles del navbar -->
+                <div class="flex items-center space-x-4">
+                    <!-- Toggle modo oscuro/claro -->
+                    <button id="theme-toggle" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-white">
+                        <i id="theme-icon" class="fas fa-moon"></i>
+                    </button>
+                    
+                    <!-- Botón menú hamburguesa (Mobile) -->
+                    <button id="menu-toggle" class="md:hidden text-gray-800 dark:text-white">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Menú móvil (oculto por defecto) -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-2">
+                <div class="flex flex-col space-y-4">
+                    <a href="#inicio" class="text-gray-700 dark:text-gray-300 hover:text-pizza-red dark:hover:text-pizza-yellow font-medium py-2 transition-colors">Inicio</a>
+                    <a href="#menu" class="text-gray-700 dark:text-gray-300 hover:text-pizza-red dark:hover:text-pizza-yellow font-medium py-2 transition-colors">Menú</a>
+                    <a href="#sucursales" class="text-gray-700 dark:text-gray-300 hover:text-pizza-red dark:hover:text-pizza-yellow font-medium py-2 transition-colors">Sucursales</a>
+                    <a href="#ingredientes" class="text-gray-700 dark:text-gray-300 hover:text-pizza-red dark:hover:text-pizza-yellow font-medium py-2 transition-colors">Ingredientes</a>
+                    <a href="#nosotros" class="text-gray-700 dark:text-gray-300 hover:text-pizza-red dark:hover:text-pizza-yellow font-medium py-2 transition-colors">Nosotros</a>
+                    <a href="#contacto" class="text-gray-700 dark:text-gray-300 hover:text-pizza-red dark:hover:text-pizza-yellow font-medium py-2 transition-colors">Contacto</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section id="inicio" class="hero-bg min-h-screen flex items-center pt-16">
+        <div class="container mx-auto px-4 py-16">
+            <div class="max-w-3xl mx-auto text-center animate-fadeInUp">
+                <!-- Título principal -->
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-white mb-4 leading-tight">
+                    La Auténtica Pizza Italiana<br>
+                    <span class="text-pizza-yellow">Hecha con Pasión</span>
+                </h1>
+                
+                <!-- Subtítulo -->
+                <p class="text-xl md:text-2xl text-gray-200 mb-10 max-w-2xl mx-auto">
+                    Ingredientes frescos, masa madre y horno de leña
+                </p>
+                
+                <!-- Botones CTA -->
+                <div class="flex flex-col sm:flex-row justify-center gap-6 mt-10">
+                    <a href="#menu" class="bg-pizza-red hover:bg-red-700 text-white font-bold py-4 px-8 rounded-full text-lg shadow-lg transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-utensils mr-2"></i> Ver Menú
+                    </a>
+                    <a href="#" class="bg-transparent border-2 border-pizza-yellow hover:bg-pizza-yellow hover:bg-opacity-20 text-pizza-yellow font-bold py-4 px-8 rounded-full text-lg transform hover:scale-105 transition-all duration-300">
+                        <i class="fas fa-shopping-cart mr-2"></i> Pedir Online
+                    </a>
+                </div>
+                
+                <!-- Indicador scroll -->
+                <div class="mt-20">
+                    <a href="#menu" class="inline-block animate-bounce">
+                        <i class="fas fa-chevron-down text-white text-2xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Sección Menú -->
+    <section id="menu" class="py-16 bg-gray-50 dark:bg-gray-800 transition-all">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-display font-bold text-gray-800 dark:text-white mb-4">
+                    Nuestras <span class="text-pizza-red">Especialidades</span>
+                </h2>
+                <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                    Descubre nuestra selección de pizzas artesanales, preparadas con los mejores ingredientes
+                </p>
+            </div>
+            
+            <!-- Filtros de categoría -->
+            <div class="flex flex-wrap justify-center gap-4 mb-10">
+                <button class="filter-btn px-4 py-2 rounded-full bg-pizza-red text-white font-medium" data-category="todas">
+                    Todas
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" data-category="clasicas">
+                    Clásicas
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" data-category="especialidades">
+                    Especialidades
+                </button>
+                <button class="filter-btn px-4 py-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-300 font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" data-category="vegetarianas">
+                    Vegetarianas
+                </button>
+            </div>
+            
+            <!-- Contenedor para las pizzas (se llenará dinámicamente) -->
+            <div id="pizzas-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Se mostrará un loader mientras se cargan las pizzas -->
+                <div id="loader" class="col-span-3 flex justify-center py-12">
+                    <div class="loader"></div>
+                </div>
+                <!-- Las pizzas se renderizarán aquí dinámicamente -->
+            </div>
+            
+            <!-- Mensaje de error (oculto por defecto) -->
+            <div id="error-message" class="hidden text-center mt-8 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-lg">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <span id="error-text">Error al cargar el menú. Por favor, intente nuevamente.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Ingredientes -->
+<section id="ingredientes" class="py-20 bg-white dark:bg-gray-800 transition-all">
+    <div class="container mx-auto px-4">
+        <!-- Título principal -->
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-gray-800 dark:text-white mb-6">
+                Ingredientes de Calidad: <span class="text-pizza-red">El Secreto</span> de Nuestra Pizza
+            </h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300">
+                En PizzaFuego, creemos que una pizza extraordinaria comienza con ingredientes excepcionales. 
+                Seleccionamos a mano cada componente para garantizar un sabor auténtico y fresco en cada bocado.
+            </p>
+        </div>
+
+        <!-- Grid de ingredientes -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <!-- Ingrediente 1: Masa Madre -->
+            <div class="bg-pizza-light dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-20 h-20 bg-pizza-yellow rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-bread-slice text-pizza-brown text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Masa Madre</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Nuestra masa, fermentada lentamente durante 48 horas, crea una base ligera, 
+                        crujiente y llena de sabor.
+                    </p>
+                    <div class="mt-4 text-sm text-pizza-red font-semibold">
+                        <i class="fas fa-clock mr-2"></i>48 horas de fermentación
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ingrediente 2: Tomates San Marzano -->
+            <div class="bg-pizza-light dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-20 h-20 bg-pizza-red rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-apple-alt text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Tomates San Marzano</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Importados de Italia, su dulzura y baja acidez son la base perfecta 
+                        para nuestra salsa casera.
+                    </p>
+                    <div class="mt-4 text-sm text-pizza-red font-semibold">
+                        <i class="fas fa-globe-europe mr-2"></i>Importados de Italia
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ingrediente 3: Mozzarella Fresca -->
+            <div class="bg-pizza-light dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-20 h-20 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-cheese text-pizza-brown text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Mozzarella Fresca</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Queso cremoso y delicado que se derrite a la perfección, aportando una textura inigualable.
+                    </p>
+                    <div class="mt-4 text-sm text-pizza-red font-semibold">
+                        <i class="fas fa-leaf mr-2"></i>100% Natural
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ingrediente 4: Albahaca Fresca -->
+            <div class="bg-pizza-light dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-leaf text-green-600 dark:text-green-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Albahaca Fresca</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Hojas de albahaca recién cortadas que añaden un aroma y un toque de frescura vibrante.
+                    </p>
+                    <div class="mt-4 text-sm text-pizza-red font-semibold">
+                        <i class="fas fa-seedling mr-2"></i>Cultivo local
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ingrediente 5: Pepperoni Artesanal -->
+            <div class="bg-pizza-light dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-20 h-20 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-drumstick-bite text-pizza-red text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Pepperoni Artesanal</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Ligeramente picante y curado por expertos locales para un sabor intenso y auténtico.
+                    </p>
+                    <div class="mt-4 text-sm text-pizza-red font-semibold">
+                        <i class="fas fa-fire mr-2"></i>Ligeramente picante
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ingrediente 6: Aceite de Oliva Extra Virgen -->
+            <div class="bg-pizza-light dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-20 h-20 bg-yellow-50 dark:bg-yellow-800 rounded-full flex items-center justify-center mb-6">
+                        <i class="fas fa-wine-bottle text-yellow-600 dark:text-yellow-400 text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Aceite de Oliva Extra Virgen</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Un toque final de aceite de alta calidad para realzar todos los sabores y aromas.
+                    </p>
+                    <div class="mt-4 text-sm text-pizza-red font-semibold">
+                        <i class="fas fa-award mr-2"></i>Primera prensada
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Separador decorativo -->
+        <div class="mt-16 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <div class="text-center">
+                <p class="text-lg text-gray-700 dark:text-gray-300 font-medium italic">
+                    "La calidad no es un acto, es un hábito. Por eso cada ingrediente cuenta."
+                </p>
+                <p class="mt-2 text-gray-600 dark:text-gray-400">- Chef Giovanni, Fundador</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sección Nosotros -->
+<section id="nosotros" class="py-20 bg-gray-50 dark:bg-gray-900 transition-all">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col lg:flex-row items-center gap-12">
+            <!-- Imagen -->
+            <div class="lg:w-1/2">
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1592861956120-e524fc739696?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                         alt="Chef Giovanni preparando pizza" 
+                         class="rounded-2xl shadow-2xl w-full h-auto">
+                    <div class="absolute -bottom-6 -right-6 bg-pizza-red text-white p-6 rounded-2xl shadow-xl">
+                        <p class="text-3xl font-bold">+25 años</p>
+                        <p class="text-sm">de tradición</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Texto -->
+            <div class="lg:w-1/2">
+                <h2 class="text-3xl md:text-4xl font-display font-bold text-gray-800 dark:text-white mb-6">
+                    Nuestra <span class="text-pizza-red">Historia</span>
+                </h2>
+                <div class="space-y-4">
+                    <p class="text-gray-600 dark:text-gray-300">
+                        En 1998, el Chef Giovanni Rossi trajo consigo las recetas secretas de su abuela desde Nápoles, 
+                        Italia. Con solo un horno de leña y una pasión inquebrantable, comenzó lo que hoy es PizzaFuego.
+                    </p>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Lo que comenzó como un pequeño local familiar se ha convertido en un referente de la pizza 
+                        artesanal, manteniendo siempre los mismos principios: ingredientes frescos, técnicas tradicionales 
+                        y el amor por el oficio.
+                    </p>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Hoy, seguimos horneando cada pizza en nuestro horno de leña original, usando la misma masa madre 
+                        que el Nonno Giovanni creó hace más de dos décadas.
+                    </p>
+                </div>
+
+                <!-- Valores -->
+                <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="flex items-start">
+                        <div class="bg-pizza-red text-white p-3 rounded-lg mr-4">
+                            <i class="fas fa-heart text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 dark:text-white">Pasión por lo Auténtico</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Recetas tradicionales italianas</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="bg-pizza-red text-white p-3 rounded-lg mr-4">
+                            <i class="fas fa-seedling text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 dark:text-white">Ingredientes Frescos</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Selección diaria de proveedores locales</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="bg-pizza-red text-white p-3 rounded-lg mr-4">
+                            <i class="fas fa-fire text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 dark:text-white">Horno de Leña</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Cocción tradicional a 400°C</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="bg-pizza-red text-white p-3 rounded-lg mr-4">
+                            <i class="fas fa-users text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-800 dark:text-white">Tradición Familiar</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-300">Tres generaciones de pizzeros</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sección Sucursales -->
+<section id="sucursales" class="py-20 bg-white dark:bg-gray-800 transition-all">
+    <div class="container mx-auto px-4">
+        <!-- Título principal -->
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-gray-800 dark:text-white mb-6">
+                Nuestras <span class="text-pizza-red">Sucursales</span>
+            </h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300">
+                Visítanos en cualquiera de nuestras ubicaciones. Cada sucursal mantiene la misma calidad 
+                y pasión por la auténtica pizza italiana.
+            </p>
+        </div>
+
+        <!-- Grid de sucursales -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            
+            <!-- Sucursal 1: Centro Histórico -->
+            <div class="bg-pizza-light dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <!-- Imagen de la sucursal -->
+                <div class="relative h-48 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                         alt="Sucursal Centro Histórico" 
+                         class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500">
+                    <div class="absolute top-4 left-4 bg-pizza-red text-white px-3 py-1 rounded-full text-sm font-bold">
+                        <i class="fas fa-crown mr-1"></i> Principal
+                    </div>
+                </div>
+                
+                <!-- Información de la sucursal -->
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Centro Histórico</h3>
+                    
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-start">
+                            <div class="text-pizza-red mr-3 mt-1">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                Av. Principal #123, Centro Histórico
+                            </p>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="text-pizza-red mr-3 mt-1">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                (555) 123-4567
+                            </p>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="text-pizza-red mr-3 mt-1">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-600 dark:text-gray-300 font-medium mb-1">Horario:</p>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">
+                                    Lunes a Viernes: 12:00 - 23:00<br>
+                                    Sábados y Domingos: 11:00 - 00:00
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Características especiales -->
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="bg-red-100 dark:bg-red-900 text-pizza-red dark:text-red-300 text-xs px-3 py-1 rounded-full">
+                            <i class="fas fa-fire mr-1"></i> Horno de leña
+                        </span>
+                        <span class="bg-yellow-100 dark:bg-yellow-900 text-pizza-brown dark:text-yellow-300 text-xs px-3 py-1 rounded-full">
+                            <i class="fas fa-utensils mr-1"></i> Comedor
+                        </span>
+                        <span class="bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 text-xs px-3 py-1 rounded-full">
+                            <i class="fas fa-parking mr-1"></i> Estacionamiento
+                        </span>
+                    </div>
+                    
+                    <!-- Botones de acción -->
+                    <div class="flex space-x-3">
+                        <a href="https://maps.google.com/?q=Av.+Principal+123+Centro+Histórico" 
+                           target="_blank"
+                           class="flex-1 bg-pizza-red hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg text-center transition-colors">
+                            <i class="fas fa-directions mr-2"></i> Cómo llegar
+                        </a>
+                        <button class="flex-1 bg-transparent border border-pizza-red text-pizza-red hover:bg-pizza-red hover:text-white font-medium py-3 px-4 rounded-lg transition-colors">
+                            <i class="fas fa-calendar-alt mr-2"></i> Reservar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sucursal 2: Zona Norte -->
+            <div class="bg-pizza-light dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <!-- Imagen de la sucursal -->
+                <div class="relative h-48 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                         alt="Sucursal Zona Norte" 
+                         class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500">
+                    <div class="absolute top-4 left-4 bg-pizza-yellow text-pizza-brown px-3 py-1 rounded-full text-sm font-bold">
+                        <i class="fas fa-star mr-1"></i> Popular
+                    </div>
+                </div>
+                
+                <!-- Información de la sucursal -->
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Zona Norte</h3>
+                    
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-start">
+                            <div class="text-pizza-red mr-3 mt-1">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                Plaza Comercial Norte, Local #45
+                            </p>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="text-pizza-red mr-3 mt-1">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                (555) 234-5678
+                            </p>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="text-pizza-red mr-3 mt-1">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-600 dark:text-gray-300 font-medium mb-1">Horario:</p>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">
+                                    Todos los días: 11:00 - 23:00<br>
+                                    Viernes y Sábado: 11:00 - 00:00
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Características especiales -->
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="bg-red-100 dark:bg-red-900 text-pizza-red dark:text-red-300 text-xs px-3 py-1 rounded-full">
+                            <i class="fas fa-fire mr-1"></i> Horno de leña
+                        </span>
+                        <span class="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-xs px-3 py-1 rounded-full">
+                            <i class="fas fa-truck mr-1"></i> Delivery rápido
+                        </span>
+                        <span class="bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 text-xs px-3 py-1 rounded-full">
+                            <i class="fas fa-child mr-1"></i> Zona infantil
+                        </span>
+                    </div>
+                    
+                    <!-- Botones de acción -->
+                    <div class="flex space-x-3">
+                        <a href="https://maps.google.com/?q=Plaza+Comercial+Norte+Local+45" 
+                           target="_blank"
+                           class="flex-1 bg-pizza-red hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg text-center transition-colors">
+                            <i class="fas fa-directions mr-2"></i> Cómo llegar
+                        </a>
+                        <button class="flex-1 bg-transparent border border-pizza-red text-pizza-red hover:bg-pizza-red hover:text-white font-medium py-3 px-4 rounded-lg transition-colors">
+                            <i class="fas fa-calendar-alt mr-2"></i> Reservar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sucursal 3: Costa del Sol -->
+            <div class="bg-pizza-light dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <!-- Imagen de la sucursal -->
+                <div class="relative h-48 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                         alt="Sucursal Costa del Sol" 
+                         class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500">
+                    <div class="absolute top-4 left-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                        <i class="fas fa-umbrella-beach mr-1"></i> Terraza
+                    </div>
+                </div>
+                
+                <!-- Información de la sucursal -->
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Costa del Sol</h3>
+                    
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-start">
+                            <div class="text-pizza-red mr-3 mt-1">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                Boulevard Costero #789, Zona Turística
+                            </p>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="text-pizza-red mr-3 mt-1">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-300">
+                                (555) 345-6789
+                            </p>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="text-pizza-red mr-3 mt-1">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-600 dark:text-gray-300 font-medium mb-1">Horario:</p>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">
+                                    Todos los días: 12:00 - 00:00<br>
+                                    Temporada alta: 11:00 - 01:00
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Características especiales -->
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span class="bg-red-100 dark:bg-red-900 text-pizza-red dark:text-red-300 text-xs px-3 py-1 rounded-full">
+                            <i class="fas fa-fire mr-1"></i> Horno de leña
+                        </span>
+                        <span class="bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 text-xs px-3 py-1 rounded-full">
+                            <i class="fas fa-umbrella mr-1"></i> Terraza vista al mar
+                        </span>
+                        <span class="bg-yellow-100 dark:bg-yellow-900 text-pizza-brown dark:text-yellow-300 text-xs px-3 py-1 rounded-full">
+                            <i class="fas fa-wine-glass-alt mr-1"></i> Bar de vinos
+                        </span>
+                    </div>
+                    
+                    <!-- Botones de acción -->
+                    <div class="flex space-x-3">
+                        <a href="https://maps.google.com/?q=Boulevard+Costero+789+Zona+Turística" 
+                           target="_blank"
+                           class="flex-1 bg-pizza-red hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg text-center transition-colors">
+                            <i class="fas fa-directions mr-2"></i> Cómo llegar
+                        </a>
+                        <button class="flex-1 bg-transparent border border-pizza-red text-pizza-red hover:bg-pizza-red hover:text-white font-medium py-3 px-4 rounded-lg transition-colors">
+                            <i class="fas fa-calendar-alt mr-2"></i> Reservar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Mapa interactivo (simplificado) -->
+        <div class="mt-16 bg-pizza-light dark:bg-gray-900 rounded-2xl p-8 shadow-lg">
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">
+                Encuéntranos Fácilmente
+            </h3>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Mapa (placeholder con imagen) -->
+                <div class="bg-gray-200 dark:bg-gray-700 rounded-xl overflow-hidden h-64 lg:h-auto">
+                    <div class="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
+                        <div class="text-center">
+                            <i class="fas fa-map-marked-alt text-4xl mb-4"></i>
+                            <p>Mapa interactivo</p>
+                            <p class="text-sm">(Integrar Google Maps aquí)</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Leyenda de sucursales -->
+                <div>
+                    <h4 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Todas Nuestras Sucursales</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                            <div class="w-3 h-3 bg-pizza-red rounded-full mr-3"></div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-800 dark:text-white">Centro Histórico</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Av. Principal #123</p>
+                            </div>
+                            <div class="text-pizza-red">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                            <div class="w-3 h-3 bg-pizza-yellow rounded-full mr-3"></div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-800 dark:text-white">Zona Norte</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Plaza Comercial Norte, Local #45</p>
+                            </div>
+                            <div class="text-pizza-yellow">
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center p-3 bg-white dark:bg-gray-800 rounded-lg">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-800 dark:text-white">Costa del Sol</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">Boulevard Costero #789</p>
+                            </div>
+                            <div class="text-blue-500">
+                                <i class="fas fa-umbrella-beach"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Información adicional -->
+                    <div class="mt-6 p-4 bg-red-50 dark:bg-red-900/30 rounded-lg">
+                        <div class="flex items-start">
+                            <div class="text-pizza-red mr-3 mt-1">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-700 dark:text-gray-300">
+                                    <span class="font-semibold">Horarios especiales:</span> En días festivos, 
+                                    todas nuestras sucursales abren desde las 11:00 AM.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA final -->
+        <div class="mt-16 text-center">
+            <p class="text-xl text-gray-700 dark:text-gray-300 mb-6">
+                ¿No estás cerca de ninguna sucursal? ¡Prueba nuestro servicio a domicilio!
+            </p>
+            <a href="#" class="inline-flex items-center bg-pizza-red hover:bg-red-700 text-white font-bold py-4 px-8 rounded-full text-lg shadow-lg transform hover:scale-105 transition-all duration-300">
+                <i class="fas fa-motorcycle mr-3"></i>
+                Pedir Delivery
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Sección Contacto -->
+<section id="contacto" class="py-20 bg-gray-50 dark:bg-gray-800 transition-all">
+    <div class="container mx-auto px-4">
+        <!-- Título principal -->
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-gray-800 dark:text-white mb-6">
+                Contáctanos
+            </h2>
+            <p class="text-lg text-gray-600 dark:text-gray-300">
+                ¿Tienes una pregunta o quieres hacer una reserva? ¡Estamos aquí para ayudarte!
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Formulario de contacto -->
+            <div>
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Hablemos</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        Rellena el formulario o utiliza nuestros datos de contacto.
+                    </p>
+                </div>
+
+                <form id="contacto-form" class="space-y-6">
+                    <!-- Nombre -->
+                    <div>
+                        <label for="nombre" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                            Nombre <span class="text-pizza-red">*</span>
+                        </label>
+                        <input type="text" 
+                               id="nombre" 
+                               name="nombre" 
+                               placeholder="Introduce tu nombre"
+                               required
+                               class="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pizza-red focus:border-transparent transition-all dark:text-white">
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                            Email <span class="text-pizza-red">*</span>
+                        </label>
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               placeholder="Introduce tu email"
+                               required
+                               class="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pizza-red focus:border-transparent transition-all dark:text-white">
+                    </div>
+
+                    <!-- Teléfono -->
+                    <div>
+                        <label for="telefono" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                            Teléfono
+                        </label>
+                        <input type="tel" 
+                               id="telefono" 
+                               name="telefono" 
+                               placeholder="Introduce tu número de teléfono"
+                               class="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pizza-red focus:border-transparent transition-all dark:text-white">
+                    </div>
+
+                    <!-- Asunto -->
+                    <div>
+                        <label for="asunto" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                            Asunto
+                        </label>
+                        <select id="asunto" 
+                                name="asunto"
+                                class="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pizza-red focus:border-transparent transition-all dark:text-white">
+                            <option value="reserva">Reserva</option>
+                            <option value="informacion">Información</option>
+                            <option value="pedido">Pedido</option>
+                            <option value="sugerencia">Sugerencia</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+
+                    <!-- Mensaje -->
+                    <div>
+                        <label for="mensaje" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">
+                            Mensaje <span class="text-pizza-red">*</span>
+                        </label>
+                        <textarea id="mensaje" 
+                                  name="mensaje" 
+                                  rows="5"
+                                  placeholder="Escribe tu mensaje aquí..."
+                                  required
+                                  class="w-full px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-pizza-red focus:border-transparent transition-all dark:text-white resize-none"></textarea>
+                    </div>
+
+                    <!-- Newsletter -->
+                    <div class="flex items-start">
+                        <input type="checkbox" 
+                               id="newsletter" 
+                               name="newsletter"
+                               class="mt-1 mr-3 h-5 w-5 text-pizza-red focus:ring-pizza-red border-gray-300 dark:border-gray-600 rounded">
+                        <label for="newsletter" class="text-gray-700 dark:text-gray-300">
+                            Sí, quiero suscribirme a vuestro newsletter.
+                        </label>
+                    </div>
+
+                    <!-- Botón enviar -->
+                    <button type="submit" 
+                            class="w-full bg-pizza-red hover:bg-red-700 text-white font-bold py-4 px-6 rounded-lg text-lg transition-colors flex items-center justify-center">
+                        <i class="fas fa-paper-plane mr-3"></i>
+                        Enviar Mensaje
+                    </button>
+                </form>
+            </div>
+
+            <!-- Información de contacto -->
+            <div class="lg:pl-8">
+                <div class="bg-pizza-light dark:bg-gray-900 rounded-2xl p-8 h-full">
+                    <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-8">
+                        Información de Contacto
+                    </h3>
+
+                    <div class="space-y-8">
+                        
+                        <!-- Teléfono -->
+                        <div class="flex items-start">
+                            <div class="bg-pizza-red text-white p-3 rounded-lg mr-4">
+                                <i class="fas fa-phone text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 dark:text-white mb-1">Teléfono</h4>
+                                <p class="text-gray-600 dark:text-gray-300">
+                                    +34 912 345 678
+                                </p>
+                                <a href="tel:+34912345678" 
+                                   class="inline-flex items-center text-pizza-red hover:text-red-700 mt-2 text-sm">
+                                    <i class="fas fa-phone-volume mr-2"></i> Llamar ahora
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Horario -->
+                        <div class="flex items-start">
+                            <div class="bg-pizza-red text-white p-3 rounded-lg mr-4">
+                                <i class="fas fa-clock text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 dark:text-white mb-1">Horario</h4>
+                                <p class="text-gray-600 dark:text-gray-300">
+                                    Lunes a Domingo: 12:00 - 23:00
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                    Abrimos todos los días del año
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Separador -->
+                        <div class="border-t border-gray-300 dark:border-gray-700 pt-8">
+                            <h4 class="font-bold text-gray-800 dark:text-white mb-4">Síguenos</h4>
+                            <div class="flex space-x-4">
+                                <a href="#" class="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-pizza-red hover:text-white transition-colors">
+                                    <i class="fab fa-facebook-f text-xl"></i>
+                                </a>
+                                <a href="#" class="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-pizza-red hover:text-white transition-colors">
+                                    <i class="fab fa-instagram text-xl"></i>
+                                </a>
+                                <a href="#" class="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-pizza-red hover:text-white transition-colors">
+                                    <i class="fab fa-twitter text-xl"></i>
+                                </a>
+                                <a href="#" class="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-pizza-red hover:text-white transition-colors">
+                                    <i class="fab fa-tiktok text-xl"></i>
+                                </a>
+                                <a href="#" class="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300 hover:bg-pizza-red hover:text-white transition-colors">
+                                    <i class="fab fa-whatsapp text-xl"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Mapa pequeño -->
+                        <div class="mt-8">
+                            <div class="bg-gray-200 dark:bg-gray-700 rounded-xl overflow-hidden h-48">
+                                <div class="w-full h-full flex items-center justify-center text-gray-500 dark:text-gray-400">
+                                    <div class="text-center">
+                                        <i class="fas fa-map text-3xl mb-3"></i>
+                                        <p>Ubicación en Google Maps</p>
+                                        <p class="text-sm">(Calle Falsa 123, Madrid)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-900 dark:bg-gray-950 text-white py-12">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+            
+            <!-- Logo y descripción -->
+            <div>
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 bg-pizza-red rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-pizza-slice text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold">
+                        Pizza<span class="text-pizza-red">Fuego</span>
+                    </span>
+                </div>
+                <p class="text-gray-400 mb-4">
+                    La auténtica pizza italiana hecha con pasión y los mejores ingredientes desde 1998.
+                </p>
+                <div class="flex space-x-3">
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Enlaces rápidos -->
+            <div>
+                <h4 class="text-lg font-bold mb-4">Enlaces Rápidos</h4>
+                <ul class="space-y-2">
+                    <li><a href="#inicio" class="text-gray-400 hover:text-white transition-colors">Inicio</a></li>
+                    <li><a href="#menu" class="text-gray-400 hover:text-white transition-colors">Menú</a></li>
+                    <li><a href="#sucursales" class="text-gray-400 hover:text-white transition-colors">Sucursales</a></li>
+                    <li><a href="#ingredientes" class="text-gray-400 hover:text-white transition-colors">Ingredientes</a></li>
+                    <li><a href="#nosotros" class="text-gray-400 hover:text-white transition-colors">Nosotros</a></li>
+                    <li><a href="#contacto" class="text-gray-400 hover:text-white transition-colors">Contacto</a></li>
+                </ul>
+            </div>
+
+            <!-- Horarios -->
+            <div>
+                <h4 class="text-lg font-bold mb-4">Horarios</h4>
+                <ul class="space-y-2 text-gray-400">
+                    <li class="flex justify-between">
+                        <span>Lunes - Jueves</span>
+                        <span>12:00 - 23:00</span>
+                    </li>
+                    <li class="flex justify-between">
+                        <span>Viernes - Sábado</span>
+                        <span>12:00 - 00:00</span>
+                    </li>
+                    <li class="flex justify-between">
+                        <span>Domingo</span>
+                        <span>12:00 - 22:00</span>
+                    </li>
+                    <li class="mt-4 pt-4 border-t border-gray-800">
+                        <span class="text-pizza-red font-medium">* Festivos</span>
+                        <span class="block">11:00 - 23:00</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Newsletter -->
+            <div>
+                <h4 class="text-lg font-bold mb-4">Newsletter</h4>
+                <p class="text-gray-400 mb-4">
+                    Suscríbete para recibir ofertas especiales y novedades.
+                </p>
+                <form class="space-y-3">
+                    <input type="email" 
+                           placeholder="Tu email" 
+                           class="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-pizza-red focus:border-transparent">
+                    <button type="submit" 
+                            class="w-full bg-pizza-red hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                        Suscribirse
+                    </button>
+                </form>
+                <div class="mt-6">
+                    <h5 class="font-bold mb-2">Métodos de Pago</h5>
+                    <div class="flex space-x-2">
+                        <div class="bg-gray-800 p-2 rounded">
+                            <i class="fab fa-cc-visa text-gray-400"></i>
+                        </div>
+                        <div class="bg-gray-800 p-2 rounded">
+                            <i class="fab fa-cc-mastercard text-gray-400"></i>
+                        </div>
+                        <div class="bg-gray-800 p-2 rounded">
+                            <i class="fab fa-cc-paypal text-gray-400"></i>
+                        </div>
+                        <div class="bg-gray-800 p-2 rounded">
+                            <i class="fas fa-money-bill-wave text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Línea divisoria -->
+        <div class="border-t border-gray-800 pt-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <!-- Copyright -->
+                <div class="mb-4 md:mb-0">
+                    <p class="text-gray-400 text-sm">
+                        &copy; 2024 PizzaFuego. Todos los derechos reservados.
+                    </p>
+                </div>
+
+                <!-- Enlaces legales -->
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Política de Privacidad</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Términos y Condiciones</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Aviso Legal</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Cookies</a>
+                </div>
+
+                <!-- Volver arriba -->
+                <div class="mt-4 md:mt-0">
+                    <a href="#inicio" 
+                       class="inline-flex items-center text-gray-400 hover:text-white transition-colors text-sm">
+                        <i class="fas fa-arrow-up mr-2"></i> Volver arriba
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+    
+    <!-- Scripts -->
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
+
